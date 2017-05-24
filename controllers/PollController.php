@@ -210,6 +210,9 @@ class PollController extends ContentContainerController
 
     public function actionExport()
     {
+        if (!$this->contentContainer->permissionManager->can(new \humhub\modules\polls\permissions\ExportPoll())) {
+            throw new HttpException(400, 'Access denied!');
+        }
         $poll = $this->getPollByParameter();
         $poll->getCSVAnswers();
     }
