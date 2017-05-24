@@ -26,7 +26,6 @@ class PollController extends ContentContainerController
         return array(
             'stream' => array(
                 'class' => \humhub\modules\polls\components\StreamAction::className(),
-                'includes' => Poll::className(),
                 'mode' => \humhub\modules\polls\components\StreamAction::MODE_NORMAL,
                 'contentContainer' => $this->contentContainer
             ),
@@ -69,7 +68,6 @@ class PollController extends ContentContainerController
      */
     public function actionReload()
     {
-        Yii::$app->response->format = 'json';
         $id = Yii::$app->request->get('id');
         $model = Poll::findOne(['id' => $id]);
 
@@ -77,11 +75,12 @@ class PollController extends ContentContainerController
             throw new HttpException(403, Yii::t('PollsModule.controllers_PollController', 'Access denied!'));
         }
 
-        return \humhub\modules\stream\actions\Stream::getContentResultEntry($model->content);
+        return $this->renderAjaxContent($model->getWallOut(['justEdited' => true]));
     }
 
     public function actionEdit()
     {
+
         $request = Yii::$app->request;
         $id = $request->get('id');
 
@@ -108,7 +107,8 @@ class PollController extends ContentContainerController
             if ($model->validate() && $model->save()) {
                 // Reload record to get populated updated_at field
                 $model = Poll::findOne(['id' => $id]);
-                return \humhub\modules\stream\actions\Stream::getContentResultEntry($model->content);
+                $result['success'] = true;
+                $result['output'] = $this->renderAjaxContent($model->getWallOut(['justEdited' => true]));
             } else {
                 $result['errors'] = $model->getErrors();
             }
@@ -120,12 +120,12 @@ class PollController extends ContentContainerController
 
     public function actionOpen()
     {
-        return $this->asJson($this->setClosed(Yii::$app->request->get('id'), false)); 
+        return $this->setClosed(Yii::$app->request->get('id'), false);
     }
 
     public function actionClose()
     {
-        return  $this->asJson($this->setClosed(Yii::$app->request->get('id'), true)); 
+        return $this->setClosed(Yii::$app->request->get('id'), true);
     }
 
     public function setClosed($id, $closed)
@@ -139,10 +139,8 @@ class PollController extends ContentContainerController
 
         $model->closed = $closed;
         $model->save();
-        // Refresh updated_at
-        $model->content->refresh();
-        
-        return \humhub\modules\stream\actions\Stream::getContentResultEntry($model->content);
+
+        return $this->renderAjaxContent($model->getWallOut(['justEdited' => true]));
     }
 
     /**
@@ -150,7 +148,6 @@ class PollController extends ContentContainerController
      */
     public function actionAnswer()
     {
-        Yii::$app->response->format = 'json';
         $poll = $this->getPollByParameter();
         $answers = Yii::$app->request->post('answers');
 
@@ -169,7 +166,7 @@ class PollController extends ContentContainerController
         }
 
         $poll->vote($votes);
-        return \humhub\modules\stream\actions\Stream::getContentResultEntry($poll->content);
+        return $this->renderPollOut($poll);
     }
 
     /**
@@ -177,10 +174,9 @@ class PollController extends ContentContainerController
      */
     public function actionAnswerReset()
     {
-        Yii::$app->response->format = 'json';
         $poll = $this->getPollByParameter();
         $poll->resetAnswer();
-        return \humhub\modules\stream\actions\Stream::getContentResultEntry($poll->content);
+        return $this->renderPollOut($poll);
     }
 
     /**
@@ -229,6 +225,7 @@ class PollController extends ContentContainerController
 
         $json = array();
         $json['output'] = $this->renderAjaxContent($question->getWallOut());
+        $json['wallEntryId'] = $question->content->getFirstWallEntryId();
 
         return $json;
     }

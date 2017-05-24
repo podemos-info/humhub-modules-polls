@@ -17,8 +17,6 @@
  * NOTE: this file must be saved in UTF-8 encoding.
  */
 return [
-    'Cancel' => '',
-    'Save' => '',
-    'Allows to start polls.' => 'Permite iniciar encuestas.',
+    'Allows to start polls.' => '',
     'Polls' => 'Votaciones',
 ];

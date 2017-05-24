@@ -17,8 +17,6 @@
  * NOTE: this file must be saved in UTF-8 encoding.
  */
 return [
-    'Complete Poll' => '',
-    'Reopen Poll' => '',
     'Anonymous' => 'Anonyme',
     'Closed' => 'Fermé',
     'Created at' => '',

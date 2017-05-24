@@ -19,8 +19,6 @@
 return [
     'Anonymous' => '',
     'Closed' => '',
-    'Complete Poll' => '',
-    'Reopen Poll' => '',
     'Created at' => '',
     'Export poll' => '',
     'Reset my vote' => '',

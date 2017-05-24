@@ -144,8 +144,6 @@ class Poll extends ContentActiveRecord implements \humhub\modules\search\interfa
             'editAnswers' => Yii::t('PollsModule.models_Poll', 'Answers'),
             'question' => Yii::t('PollsModule.models_Poll', 'Question'),
             'allow_multiple' => Yii::t('PollsModule.models_Poll', 'Multiple answers per user'),
-            'is_random' => Yii::t('PollsModule.widgets_views_pollForm', 'Display answers in random order?'),
-            'anonymous' => Yii::t('PollsModule.widgets_views_pollForm', 'Anonymous Votes?')
         );
     }
     
@@ -205,9 +203,6 @@ class Poll extends ContentActiveRecord implements \humhub\modules\search\interfa
         foreach ($this->newAnswers as $answerText) {
             $this->addAnswer($answerText);
         }
-        
-        // Reset cached answers
-        unset($this->answers);
     }
 
     public function addAnswer($answerText)

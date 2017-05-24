@@ -18,7 +18,5 @@
  */
 return [
     'Allows to start polls.' => '',
-    'Cancel' => '',
-    'Save' => '',
     'Polls' => 'Анкети',
 ];
