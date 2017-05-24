@@ -42,7 +42,7 @@ class Events extends \yii\base\Object
             ]);
         }
 
-        if ($object->getAttributes()['closed'] == 0) {
+        if ($object->content->getContainer()->permissionManager->can(new \humhub\modules\polls\permissions\ExportPoll())) {
             $event->sender->addWidget(\humhub\modules\polls\widgets\ExportButton::className(), [
                 'poll' => $object
             ]);
