@@ -127,9 +127,15 @@ class Poll extends ContentActiveRecord implements \humhub\modules\search\interfa
         fputcsv($output, array(''));
         foreach ($query->each() as $row) {
             $line = $row->getAttributes();
-            $user = User::findOne(['id' => $line['created_by']])->getAttributes()['username'];
+            if ($this->anonymous) {
+                $name = "anonymous";
+            } else{
+                $userProfile = User::findOne(['id' => $line['created_by']])->profile->getAttributes();
+                $name = $userProfile['firstname']." ".$userProfile['lastname'];
+            }
+            
             $answer = PollAnswer::findOne(['id' => $line['poll_answer_id']])->getAttributes()['answer'];
-            fputcsv($output, array($user, $answer, $line['created_at']));
+            fputcsv($output, array($name, $answer, $line['created_at']));
         }
     }
     
