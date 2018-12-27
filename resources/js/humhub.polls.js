@@ -10,7 +10,12 @@ humhub.module('polls', function (module, require, $) {
     object.inherits(Poll, Content);
 
     Poll.prototype.vote = function (submitEvent) {
-        this.update(client.submit(submitEvent));
+        if (submitEvent.$form.find("input:checked").length) {
+            this.update(client.submit(submitEvent));
+        } else {
+            module.log.warn("warn.answer_required", true);
+            setTimeout(function() {submitEvent.finish()}, 50);
+        }
     };
 
     Poll.prototype.close = function (event) {
@@ -20,8 +25,8 @@ humhub.module('polls', function (module, require, $) {
     Poll.prototype.update = function (update) {
         this.loader();
         update.then($.proxy(this.handleUpdateSuccess, this))
-                .catch(Poll.handleUpdateError)
-                .finally($.proxy(this.loader, this, false));
+            .catch(Poll.handleUpdateError)
+            .finally($.proxy(this.loader, this, false));
     };
 
     Poll.prototype.handleUpdateSuccess = function (response) {
@@ -47,7 +52,7 @@ humhub.module('polls', function (module, require, $) {
                 $errorMessage.html(errors).parent().show();
             }
         }).catch(Poll.handleUpdateError)
-                .finally($.proxy(this.loader, this, false));
+            .finally($.proxy(this.loader, this, false));
     };
 
     Poll.prototype.reset = function (evt) {
