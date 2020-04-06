@@ -8,6 +8,8 @@
 
 namespace humhub\modules\polls;
 
+use humhub\modules\polls\widgets\CloseButton;
+use humhub\modules\polls\widgets\ResetButton;
 use humhub\modules\space\models\Space;
 use humhub\modules\user\models\User;
 use humhub\modules\polls\models\Poll;
@@ -30,14 +32,14 @@ class Events
             return;
         }
         
-        if($object->content->canWrite()) {
-            $event->sender->addWidget(\humhub\modules\polls\widgets\CloseButton::className(), [
+        if($object->content->canEdit()) {
+            $event->sender->addWidget(CloseButton::class, [
                 'poll' => $object
             ]);
         }
         
         if($object->isResetAllowed()) {
-            $event->sender->addWidget(\humhub\modules\polls\widgets\ResetButton::className(), [
+            $event->sender->addWidget(ResetButton::class, [
                 'poll' => $object
             ]);
         }
@@ -64,7 +66,6 @@ class Events
         if ($space->isModuleEnabled('polls')) {
             $event->sender->addItem(array(
                 'label' => Yii::t('PollsModule.base', 'Polls'),
-                'group' => 'modules',
                 'url' => $space->createUrl('/polls/poll/show'),
                 'icon' => '<i class="fa fa-question-circle"></i>',
                 'isActive' => (Yii::$app->controller->module && Yii::$app->controller->module->id == 'polls'),
@@ -72,10 +73,25 @@ class Events
         }
     }
 
+    public static function onProfileMenuInit($event)
+    {
+        $user = $event->sender->user;
+
+        if ($user->isModuleEnabled('polls')) {
+            $event->sender->addItem([
+                'label' => Yii::t('PollsModule.base', 'Polls'),
+                'url' => $user->createUrl('/polls/poll/show'),
+                'icon' => '<i class="fa fa-question-circle"></i>',
+                'isActive' => (Yii::$app->controller->module && Yii::$app->controller->module->id == 'polls'),
+            ]);
+        }
+    }
+
     /**
      * On User delete, delete all poll answers by this user
      *
      * @param type $event
+     * @return bool
      */
     public static function onUserDelete($event)
     {
@@ -90,6 +106,8 @@ class Events
      * Callback to validate module database records.
      *
      * @param Event $event
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
      */
     public static function onIntegrityCheck($event)
     {
@@ -120,8 +138,9 @@ class Events
 
     /**
      * Create installer sample data
-     * 
+     *
      * @param \yii\base\Event $event
+     * @throws \yii\base\Exception
      */
     public static function onSampleDataInstall($event)
     {

@@ -8,17 +8,19 @@ use humhub\modules\stream\widgets\StreamViewer;
 $canCreatePolls = $contentContainer->permissionManager->can(new CreatePoll());
 ?>
 
-<?=  WallCreateForm::widget([
-    'contentContainer' => $contentContainer,
-    'submitButtonText' => Yii::t('PollsModule.widgets_PollFormWidget', 'Ask'),
-]); ?>
+<?php if($canCreatePolls) : ?>
+    <?=  WallCreateForm::widget([
+        'contentContainer' => $contentContainer,
+        'submitButtonText' => Yii::t('PollsModule.widgets_PollFormWidget', 'Ask'),
+    ]); ?>
+<?php endif; ?>
 
 <?php
  $filters = [
      'filter_polls_notAnswered' => Yii::t('PollsModule.widgets_views_stream', 'No answered yet'),
      'filter_entry_mine' => Yii::t('PollsModule.widgets_views_stream', 'Asked by me'),
-     'filter_visibility_public' => Yii::t('PollsModule.widgets_views_stream', 'Only public polls'),
-     'filter_visibility_private' => Yii::t('PollsModule.widgets_views_stream', 'Only private polls'),
+     'visibility_private' => Yii::t('PollsModule.widgets_views_stream', 'Only public polls'),
+     'visibility_public' => Yii::t('PollsModule.widgets_views_stream', 'Only private polls'),
 
  ];
 
