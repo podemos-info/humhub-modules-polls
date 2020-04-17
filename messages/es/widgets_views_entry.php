@@ -17,9 +17,9 @@
  * NOTE: this file must be saved in UTF-8 encoding.
  */
 return [
-    '<strong>Note:</strong> The result is hidden until the poll is closed by a moderator.' => '',
-    'Complete Poll' => '',
-    'Reopen Poll' => '',
+    '<strong>Note:</strong> The result is hidden until the poll is closed by a moderator.' => '<strong>Nota:</strong> El resultado está oculto hasta que la encuesta sea cerrada por el moderador.',
+    'Complete Poll' => 'Terminar encuesta',
+    'Reopen Poll' => 'Reabrir encuesta',
     'Created at' => 'Creado el',
     'Export poll' => 'Exportar encuesta',
     'Anonymous' => 'Anónimos',
