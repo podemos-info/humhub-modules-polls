@@ -17,7 +17,7 @@
  * NOTE: this file must be saved in UTF-8 encoding.
  */
 return [
-    'Hide results until poll is closed?' => '',
+    'Hide results until poll is closed?' => '¿Ocultar resultados hasta que la encuesta esté cerrada?',
     'Add answer...' => 'Añadir respuesta...',
     'Anonymous Votes?' => '¿Votos Anónimos?',
     'Ask something...' => 'Pregunta algo...',
