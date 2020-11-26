@@ -1,11 +1,20 @@
 Changelog
 =========
 
-0.9.20
+1.0.0 (November 30, 2020)
+---------------------
+- Enh #71: Wall Stream Layout Migration (HumHub 1.7+)
+- Enh: Rename the attribute "Question" to "Description"
+- Enh: Add an attribute "Question" as simple short text
+
+
+0.9.20 - October 16, 2020
 -------------------------
 - Enh #15: Implement user profile polls
 - Fix: Poll create form rendered for users without create poll permission
-- Fix #59: Only public/private poll stream filter not working 
+- Enh #56: Use of new richtext editor in poll question
+- Fix #50: Poll stream filter not working
+- Chng: Updated min HumHub min version to 1.6
 
 0.9.19 - October 16, 2019
 -------------------------

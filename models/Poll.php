@@ -2,6 +2,7 @@
 
 namespace humhub\modules\polls\models;
 
+use humhub\modules\content\widgets\richtext\RichText;
 use Yii;
 use humhub\modules\search\interfaces\Searchable;
 use humhub\modules\content\components\ContentActiveRecord;
@@ -19,6 +20,7 @@ use PHPExcel_IOFactory;
  *
  * @property integer $id
  * @property string $question
+ * @property string $description
  * @property integer $allow_multiple
  * @property string $created_at
  * @property integer $created_by
@@ -56,8 +58,8 @@ class Poll extends ContentActiveRecord implements Searchable
     {
         return [
             self::SCENARIO_CLOSE => [],
-            self::SCENARIO_CREATE => ['question', 'anonymous', 'is_random', 'show_result_after_close', 'newAnswers', 'allow_multiple'],
-            self::SCENARIO_EDIT => ['question', 'anonymous', 'is_random', 'show_result_after_close','newAnswers', 'editAnswers', 'allow_multiple']
+            self::SCENARIO_CREATE => ['question', 'description', 'anonymous', 'is_random', 'show_result_after_close', 'newAnswers', 'allow_multiple'],
+            self::SCENARIO_EDIT => ['question', 'description', 'anonymous', 'is_random', 'show_result_after_close','newAnswers', 'editAnswers', 'allow_multiple']
         ];
     }
 
@@ -67,8 +69,9 @@ class Poll extends ContentActiveRecord implements Searchable
     public function rules()
     {
         return array(
-            [['question'], 'required'],
-            [['question'], 'string'],
+            [['question'], 'string', 'max' => 255],
+            [['description'], 'required'],
+            [['description'], 'string'],
             [['anonymous', 'is_random'], 'boolean'],
             [['newAnswers'], 'required', 'on' => self::SCENARIO_CREATE],
             [['newAnswers'], 'minTwoNewAnswers', 'on' => self::SCENARIO_CREATE],
@@ -163,6 +166,7 @@ class Poll extends ContentActiveRecord implements Searchable
             'newAnswers' => Yii::t('PollsModule.models_Poll', 'Answers'),
             'editAnswers' => Yii::t('PollsModule.models_Poll', 'Answers'),
             'question' => Yii::t('PollsModule.models_Poll', 'Question'),
+            'description' => Yii::t('PollsModule.models_Poll', 'Description'),
             'allow_multiple' => Yii::t('PollsModule.models_Poll', 'Multiple answers per user'),
             'is_random' => Yii::t('PollsModule.widgets_views_pollForm', 'Display answers in random order?'),
             'anonymous' => Yii::t('PollsModule.widgets_views_pollForm', 'Anonymous Votes?'),
@@ -186,7 +190,7 @@ class Poll extends ContentActiveRecord implements Searchable
     }
 
     /**
-     * @return ActiveRecord containing all answers of thes poll
+     * @return \yii\db\ActiveQuery
      */
     public function getAnswers()
     {
@@ -209,13 +213,16 @@ class Poll extends ContentActiveRecord implements Searchable
 
     /**
      * Saves new answers (if set) and updates answers given editanswers (if set)
-     * @param type $insert
-     * @param type $changedAttributes
-     * @return boolean
+     * @param $insert
+     * @param $changedAttributes
+     * @return bool|void
+     * @throws \yii\base\InvalidConfigException
      */
     public function afterSave($insert, $changedAttributes)
     {
         parent::afterSave($insert, $changedAttributes);
+
+        RichText::postProcess($this->description, $this);
 
         if($this->scenario === static::SCENARIO_EDIT || $this->scenario === static::SCENARIO_CREATE) {
             if (!$insert) {
@@ -382,7 +389,7 @@ class Poll extends ContentActiveRecord implements Searchable
      */
     public function getContentName()
     {
-        return Yii::t('PollsModule.models_Poll', "Question");
+        return Yii::t('PollsModule.models_Poll', 'Question');
     }
 
     /**
@@ -399,7 +406,7 @@ class Poll extends ContentActiveRecord implements Searchable
     public function getSearchAttributes()
     {
 
-        $itemAnswers = "";
+        $itemAnswers = '';
 
         foreach ($this->answers as $answer) {
             $itemAnswers .= $answer->answer;
@@ -407,6 +414,7 @@ class Poll extends ContentActiveRecord implements Searchable
 
         return array(
             'question' => $this->question,
+            'description' => $this->description,
             'itemAnswers' => $itemAnswers
         );
     }
