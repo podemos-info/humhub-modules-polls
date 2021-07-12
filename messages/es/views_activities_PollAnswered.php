@@ -1,9 +1,4 @@
 <?php
-<<<<<<< HEAD
-return array (
-  '{userName} answered the {question}.' => '{userName} respondió la {question}.',
-);
-=======
 /**
  * Message translations.
  *
@@ -24,4 +19,3 @@ return array (
 return [
     '{userName} answered the {question}.' => 'El usuario {username} ha respondido a la pregunta {question}',
 ];
->>>>>>> 5a636d5c8fbcd0dd732c543b695759e61fec4f1d
